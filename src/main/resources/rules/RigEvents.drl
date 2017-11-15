@@ -1,0 +1,25 @@
+//created on: Nov 14, 2017
+package com.redhat.labs.eventaggregator;
+
+import com.redhat.labs.eventaggregator.model.RigEvent;
+import com.redhat.labs.eventaggregator.model.RigWarning;
+
+import java.lang.Number;
+
+declare RigEvent
+	@role(event)	
+	@expires(1h)
+end
+
+rule "High Temperature increase last 10 minutes on Rig Pump" 
+dialect "mvel"
+    when
+        Number( doubleValue > 60.0 ) from accumulate(
+        RigEvent( $temp : temperatureMotor ) over window:time( 10m ) from entry-point "RigEventMonitor",
+        average( $temp ) ) 
+        
+    then
+        insert(new RigWarning("temperatureMotor", "Motor temperature average is higher than 60"));  
+		System.out.println("Warning added =============");
+end
+
