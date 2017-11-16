@@ -1,5 +1,8 @@
 package com.redhat.labs.eventaggregator;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Stack;
 
 import org.kie.api.runtime.KieSession;
@@ -47,26 +50,25 @@ public class RigEventListener {
 			
 			QueryResults res = kieSession.getQueryResults("findWarnings");
 			
-			LOGGER.info("SIZE =============== " + res.size());
-			
-			HttpHeaders httpHeaders = new HttpHeaders();
-			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-			
 			for (QueryResultsRow queryResultsRow : res) {
 				RigWarning warn = (RigWarning) queryResultsRow.get("warning");
+				
+//				GregorianCalendar gc = new GregorianCalendar();
+//			    Date  warningDate = gc.getTime();
+//
+//			    String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+//
+//			    SimpleDateFormat simpleFormatter  = new SimpleDateFormat(pattern);
+//			    simpleFormatter.format(warningDate);
+			    
+			    //TODO change that in the bean 
+				
 				warningsCache.push(warn);
 				restTemplate = new RestTemplate();
 				
 				HttpEntity<RigWarning> request = new HttpEntity<>(warn);
 				RigWarning returnedRigWarning = restTemplate.postForObject("http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts", request, RigWarning.class);
 				
-				LOGGER.info("================>>>>>> "+returnedRigWarning.toString());
 			}
-			
-			
-			// http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts
-			//TODO RestTemplate to call external service and send warning
-			
-			
 	    }
 }
