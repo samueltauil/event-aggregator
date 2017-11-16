@@ -24,10 +24,10 @@ dialect "mvel"
 end
 
 rule "Clean up warnings if more than one gets generated within the window time"
-dialect "mvel"
+
 	when 
-		$warn1 : RigWarning()
-		$warn2 : RigWarning()
+		$warn1 : RigWarning($attr1 : attributeRelated) 
+		$warn2 : RigWarning($attr2 : attributeRelated == $attr1,eval( $warn1 != $warn2 )) 
 	then 
 		retract($warn2)
 end

@@ -67,6 +67,9 @@ public class EventAggregatorApplication {
     
     @Bean
     public Stack warningsCache() {
+    		if (warningsCache == null) {
+    			warningsCache = new Stack();
+    		}
     		return warningsCache;
     }
     

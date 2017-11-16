@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -46,13 +49,24 @@ public class RigEventListener {
 			
 			LOGGER.info("SIZE =============== " + res.size());
 			
+			HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+			
 			for (QueryResultsRow queryResultsRow : res) {
 				RigWarning warn = (RigWarning) queryResultsRow.get("warning");
 				warningsCache.push(warn);
+				restTemplate = new RestTemplate();
+				
+				HttpEntity<RigWarning> request = new HttpEntity<>(warn);
+				RigWarning returnedRigWarning = restTemplate.postForObject("http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts", request, RigWarning.class);
+				
+				LOGGER.info("================>>>>>> "+returnedRigWarning.toString());
 			}
 			
+			
+			// http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts
 			//TODO RestTemplate to call external service and send warning
 			
-//			restTemplate.postForObject(url, request, responseType);
+			
 	    }
 }

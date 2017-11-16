@@ -103,5 +103,77 @@ public class RigEvent implements Serializable {
 				powerOutputAmpsPH, powerOutputVolts, powerMotorAmpsPH, vibration);
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((creation == null) ? 0 : creation.hashCode());
+		result = prime * result + ((powerMotorAmpsPH == null) ? 0 : powerMotorAmpsPH.hashCode());
+		result = prime * result + ((powerOutputAmpsPH == null) ? 0 : powerOutputAmpsPH.hashCode());
+		result = prime * result + ((powerOutputVolts == null) ? 0 : powerOutputVolts.hashCode());
+		result = prime * result + ((pressurePumpDischarge == null) ? 0 : pressurePumpDischarge.hashCode());
+		result = prime * result + ((pressurePumpIntake == null) ? 0 : pressurePumpIntake.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(temperatureMotor);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((temperaturePumpIntake == null) ? 0 : temperaturePumpIntake.hashCode());
+		result = prime * result + ((vibration == null) ? 0 : vibration.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RigEvent other = (RigEvent) obj;
+		if (creation == null) {
+			if (other.creation != null)
+				return false;
+		} else if (!creation.equals(other.creation))
+			return false;
+		if (powerMotorAmpsPH == null) {
+			if (other.powerMotorAmpsPH != null)
+				return false;
+		} else if (!powerMotorAmpsPH.equals(other.powerMotorAmpsPH))
+			return false;
+		if (powerOutputAmpsPH == null) {
+			if (other.powerOutputAmpsPH != null)
+				return false;
+		} else if (!powerOutputAmpsPH.equals(other.powerOutputAmpsPH))
+			return false;
+		if (powerOutputVolts == null) {
+			if (other.powerOutputVolts != null)
+				return false;
+		} else if (!powerOutputVolts.equals(other.powerOutputVolts))
+			return false;
+		if (pressurePumpDischarge == null) {
+			if (other.pressurePumpDischarge != null)
+				return false;
+		} else if (!pressurePumpDischarge.equals(other.pressurePumpDischarge))
+			return false;
+		if (pressurePumpIntake == null) {
+			if (other.pressurePumpIntake != null)
+				return false;
+		} else if (!pressurePumpIntake.equals(other.pressurePumpIntake))
+			return false;
+		if (Double.doubleToLongBits(temperatureMotor) != Double.doubleToLongBits(other.temperatureMotor))
+			return false;
+		if (temperaturePumpIntake == null) {
+			if (other.temperaturePumpIntake != null)
+				return false;
+		} else if (!temperaturePumpIntake.equals(other.temperaturePumpIntake))
+			return false;
+		if (vibration == null) {
+			if (other.vibration != null)
+				return false;
+		} else if (!vibration.equals(other.vibration))
+			return false;
+		return true;
+	}
+
 	
 }

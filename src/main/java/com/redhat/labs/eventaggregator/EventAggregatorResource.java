@@ -32,7 +32,7 @@ public class EventAggregatorResource {
 	private Stack warningsCache;
 	
 	@RequestMapping(value = "/insertevent", method = RequestMethod.POST)
-	public ResponseEntity<RigWarning> insertEvent(@RequestBody RigEvent rigEvent) {
+	public ResponseEntity insertEvent(@RequestBody RigEvent rigEvent) {
 
 	jmsTemplate.convertAndSend("jms.message.endpoint", rigEvent);
 	
@@ -43,7 +43,7 @@ public class EventAggregatorResource {
 		return new ResponseEntity<RigWarning>(warn, HttpStatus.OK);
 	}
 	
-	return new ResponseEntity<RigWarning>(new RigWarning(), HttpStatus.OK);
+	return new ResponseEntity<String>("{}", HttpStatus.OK);
 	
 	}	
 	
