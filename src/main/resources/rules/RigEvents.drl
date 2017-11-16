@@ -1,25 +1,38 @@
-//created on: Nov 14, 2017
+//created on: Nov 14, 2017 
 package com.redhat.labs.eventaggregator;
 
 import com.redhat.labs.eventaggregator.model.RigEvent;
 import com.redhat.labs.eventaggregator.model.RigWarning;
-
 import java.lang.Number;
+import java.util.Date;
 
 declare RigEvent
 	@role(event)	
 	@expires(1h)
 end
 
-rule "High Temperature increase last 10 minutes on Rig Pump" 
+rule "High Temperature increase last 20 seconds on Rig Pump" 
 dialect "mvel"
     when
         Number( doubleValue > 60.0 ) from accumulate(
-        RigEvent( $temp : temperatureMotor ) over window:time( 10m ) from entry-point "RigEventMonitor",
+        RigEvent( $temp : temperatureMotor ) over window:time( 20s ) from entry-point "RigEventMonitor",
         average( $temp ) ) 
         
     then
-        insert(new RigWarning("temperatureMotor", "Motor temperature average is higher than 60"));  
-		System.out.println("Warning added =============");
+    		RigWarning warn = new RigWarning("temperatureMotor", "Motor temperature average is higher than 60", new Date())
+        insertLogical(warn);
 end
 
+rule "Clean up warnings if more than one gets generated within the window time"
+dialect "mvel"
+	when 
+		$warn1 : RigWarning()
+		$warn2 : RigWarning()
+	then 
+		retract($warn2)
+end
+
+
+query "findWarnings"
+	warning : RigWarning() 
+end

@@ -3,6 +3,8 @@ package com.redhat.labs.eventaggregator;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.jms.core.JmsTemplate;
+
 import com.google.gson.Gson;
 
 
@@ -32,5 +34,7 @@ public class Playground {
 //		
 //		Gson gson = new Gson();
 //		System.out.println(gson.toJson(event));
+		
+		
 	}
 }

@@ -1,5 +1,7 @@
 package com.redhat.labs.eventaggregator;
 
+import java.util.Stack;
+
 import javax.jms.ConnectionFactory;
 
 import org.kie.api.KieServices;
@@ -20,6 +22,8 @@ import org.springframework.jms.support.converter.MessageType;
 @EnableJms
 public class EventAggregatorApplication {
 
+	private Stack warningsCache;
+	
 	public static void main(String[] args) {
 		SpringApplication.run(EventAggregatorApplication.class, args);		  
 	}
@@ -59,6 +63,11 @@ public class EventAggregatorApplication {
 		 }).start();
     	
     	return kieSession;
+    }
+    
+    @Bean
+    public Stack warningsCache() {
+    		return warningsCache;
     }
     
 }

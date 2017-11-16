@@ -29,7 +29,7 @@
     
     <logger name="org.drools" level="fatal" />
     
-    <logger name="com.redhat.labs" level="info" />  
+    <logger name="com.redhat.labs" level="debug" />  
     
     <root level="info"><!-- TODO We probably want to set default level to warn instead -->
         <appender-ref ref="consoleAppender"/>

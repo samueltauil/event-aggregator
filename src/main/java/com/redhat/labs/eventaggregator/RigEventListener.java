@@ -1,9 +1,11 @@
 package com.redhat.labs.eventaggregator;
 
-import java.util.Collection;
+import java.util.Stack;
 
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.EntryPoint;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import com.redhat.labs.eventaggregator.model.RigEvent;
 import com.redhat.labs.eventaggregator.model.RigWarning;
@@ -25,19 +28,31 @@ public class RigEventListener {
 	@Qualifier("kieSessionCached")
 	private KieSession kieSession;
 	private EntryPoint ep;
-	Collection<RigWarning> warnings;
 	private static final String CEP_STREAM = "RigEventMonitor";
+	
+	@Autowired
+	@Qualifier("warningsCache")
+	private Stack warningsCache;
+	
+	private RestTemplate restTemplate;
 
 	 @JmsListener(destination = "jms.message.endpoint")
 	    public void receiveMessage(Message<RigEvent> msg) {
 			
 			ep = kieSession.getEntryPoint(CEP_STREAM);
 			ep.insert(msg.getPayload());
-
-			warnings = (Collection<RigWarning>) kieSession.getObjects( (Object object) -> { return object.getClass().getSimpleName().equals("RigWarning"); });
-			for (RigWarning warn : warnings) {
-				LOGGER.info(warn.toString());
+			
+			QueryResults res = kieSession.getQueryResults("findWarnings");
+			
+			LOGGER.info("SIZE =============== " + res.size());
+			
+			for (QueryResultsRow queryResultsRow : res) {
+				RigWarning warn = (RigWarning) queryResultsRow.get("warning");
+				warningsCache.push(warn);
 			}
-						
+			
+			//TODO RestTemplate to call external service and send warning
+			
+//			restTemplate.postForObject(url, request, responseType);
 	    }
 }
