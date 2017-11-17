@@ -8,14 +8,14 @@ import java.util.Date;
 
 declare RigEvent
 	@role(event)	
-	@expires(1h)
+	@expires(20s)
 end
 
 rule "High Temperature increase last 20 seconds on Rig Pump" 
 dialect "mvel"
     when
-        Number( doubleValue > 60.0 ) from accumulate(
-        RigEvent( $temp : temperatureMotor ) over window:time( 20s ) from entry-point "RigEventMonitor",
+        Number( doubleValue > 60.0 ) from accumulate (
+        RigEvent( $temp : temperatureMotor ) over window:time( 10s ) from entry-point "RigEventMonitor",
         average( $temp ) ) 
         
     then
@@ -23,16 +23,7 @@ dialect "mvel"
         insertLogical(warn);
 end
 
-rule "Clean up warnings if more than one gets generated within the window time"
-
-	when 
-		$warn1 : RigWarning($attr1 : attributeRelated) 
-		$warn2 : RigWarning($attr2 : attributeRelated == $attr1,eval( $warn1 != $warn2 )) 
-	then 
-		retract($warn2)
-end
-
-
 query "findWarnings"
 	warning : RigWarning() 
 end
+

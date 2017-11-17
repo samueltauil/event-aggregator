@@ -1,8 +1,5 @@
 package com.redhat.labs.eventaggregator;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Stack;
 
 import org.kie.api.runtime.KieSession;
@@ -14,9 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -40,6 +36,9 @@ public class RigEventListener {
 	@Qualifier("warningsCache")
 	private Stack warningsCache;
 	
+	@Autowired
+	JmsTemplate jmsTemplate;
+	
 	private RestTemplate restTemplate;
 
 	 @JmsListener(destination = "jms.message.endpoint")
@@ -49,26 +48,23 @@ public class RigEventListener {
 			ep.insert(msg.getPayload());
 			
 			QueryResults res = kieSession.getQueryResults("findWarnings");
-			
+						
+			if (res.size() > 0) {
+				LOGGER.info("MESSAGE EXIST IN QUERYRESULT");
+				
+				
 			for (QueryResultsRow queryResultsRow : res) {
+				
 				RigWarning warn = (RigWarning) queryResultsRow.get("warning");
 				
-//				GregorianCalendar gc = new GregorianCalendar();
-//			    Date  warningDate = gc.getTime();
-//
-//			    String pattern = "yyyy-MM-dd'T'HH:mm:ss";
-//
-//			    SimpleDateFormat simpleFormatter  = new SimpleDateFormat(pattern);
-//			    simpleFormatter.format(warningDate);
-			    
-			    //TODO change that in the bean 
+				jmsTemplate.convertAndSend("jms.message.warnings", warn);
 				
-				warningsCache.push(warn);
-				restTemplate = new RestTemplate();
+//				warningsCache.push(warn);
+//				restTemplate = new RestTemplate();
 				
-				HttpEntity<RigWarning> request = new HttpEntity<>(warn);
-				RigWarning returnedRigWarning = restTemplate.postForObject("http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts", request, RigWarning.class);
-				
+//				HttpEntity<RigWarning> request = new HttpEntity<>(warn);
+//				String ab = restTemplate.postForObject("http://machinealertservice-sampleproject.apps.c7.core.rht-labs.com/alerts/equipmentalerts", request, String.class);
+				}
 			}
-	    }
+	 }			
 }
