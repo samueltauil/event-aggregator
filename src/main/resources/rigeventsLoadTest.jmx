@@ -54,7 +54,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-&quot;creation&quot;:&quot;2017-11-14T17:27:33.918-0500&quot;,&#xd;
+&quot;creation&quot;:&quot;2017-11-14T18:30:33.918-0500&quot;,&#xd;
 &quot;pressurePumpIntake&quot;:555.6,&#xd;
 &quot;pressurePumpDischarge&quot;:33.7,&#xd;
 &quot;temperatureMotor&quot;:${temperatureMotor},&#xd;
@@ -68,8 +68,8 @@
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
-          <stringProp name="HTTPSampler.port">8080</stringProp>
+          <stringProp name="HTTPSampler.domain">api-event-aggregator.apps.c7.core.rht-labs.com</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">insertevent</stringProp>
